@@ -259,7 +259,7 @@ a:hover {
   padding: 4px 0px 10px;
 }
 .pva_title_text {
-  background: url(/t2/img/post_widget.png) no-repeat 1px -14px;
+  background: url(/VK-scan/img/post_widget.png) no-repeat 1px -14px;
   padding-left: 19px;
   white-space: nowrap;
   overflow: hidden;
@@ -270,16 +270,16 @@ a:hover {
   margin: 0 5px 0 7px;
 }
 .c_l {
-  background: url(/t2/img/feedback_color.png) no-repeat -20px -46px;
+  background: url(/VK-scan/img/feedback_color.png) no-repeat -20px -46px;
 }
 .c_c {
-  background: url(/t2/img/feedback_color.png) no-repeat -20px -94px;
+  background: url(/VK-scan/img/feedback_color.png) no-repeat -20px -94px;
 }
 .c_r {
-  background: url(/t2/img/feedback_color.png) no-repeat -20px 3px;
+  background: url(/VK-scan/img/feedback_color.png) no-repeat -20px 3px;
 }
 .c_a {
-  background: url(/t2/img/feedback_color.png) no-repeat -20px -69px;
+  background: url(/VK-scan/img/feedback_color.png) no-repeat -20px -69px;
 }
 .c {
   padding-left: 29px;
@@ -514,7 +514,7 @@ ul li {
   border: 1px solid #45688E;
   margin: -1px;
   height: 20px;
-  background: #597da3 url(/t2/img/progress_grad_flat.gif) repeat;
+  background: #597da3 url(/VK-scan/img/progress_grad_flat.gif) repeat;
 }
 .loader_user {
   border-radius: 25px;
