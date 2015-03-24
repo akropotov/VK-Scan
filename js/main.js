@@ -8,7 +8,7 @@ jQuery(document).ready(function() {
 });
 
 function main() {
-    VK.api("execute", { code: 'var user=API.users.get({"fields":"screen_name,photo_50"});var wall=API.wall.get({"count":1});var group=API.groups.get({"extended":1,"filter":"moder","count":30,"fields":"members_count"});var a=0;var b=group.items.length;var error=false;var limit_list=[];while(a<b){if(group.items[a].members_count>=100){limit_list.push(group.items[a]);}a=a+1;};if(limit_list.length<group.count){error="limit_user";}if(limit_list.length==0){error="no_groups";}return{"user":{"id":user[0].id,"screen_name":user[0].screen_name,"name":user[0].first_name+" "+user[0].last_name,"photo":user[0].photo_50,"posts":wall.count},"groups":{"alert":error,"items":limit_list}};' }, function(data) { 
+    VK.api("execute", { https: 1, code: 'var user=API.users.get({"fields":"screen_name,photo_50"});var wall=API.wall.get({"count":1});var group=API.groups.get({"extended":1,"filter":"moder","count":30,"fields":"members_count"});var a=0;var b=group.items.length;var error=false;var limit_list=[];while(a<b){if(group.items[a].members_count>=100){limit_list.push(group.items[a]);}a=a+1;};if(limit_list.length<group.count){error="limit_user";}if(limit_list.length==0){error="no_groups";}return{"user":{"id":user[0].id,"screen_name":user[0].screen_name,"name":user[0].first_name+" "+user[0].last_name,"photo":user[0].photo_50,"posts":wall.count},"groups":{"alert":error,"items":limit_list}};' }, function(data) { 
         window.user_id = data.response.user.id;
         var html = '<div id="im_rows0" class="im_rows"><div id="objects">'; 
 
