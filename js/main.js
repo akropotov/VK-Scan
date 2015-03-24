@@ -291,12 +291,12 @@ function stat(id) {
 
             var label = [], data = [];
             for (key in days) {
-                label.push(days[key].name);
+                label.push(days[key].name.toString());
                 data.push(days[key].count);
             }
 
             html += '<center><div style="width: 500px; height: 380px;"><canvas id="canvas-days" style="width: 500px; height: 316px;"></canvas></div></center>';
-            //html += '<script type="text/javascript">window.myBar = new Chart(document.getElementById("canvas-days").getContext("2d")).Bar({ labels : [' + label.join(',') + '], datasets : [{ fillColor : "#597BA8", highlightFill: "#82A2CD", data : [' + data.join(',') + '] }]});</script>';
+            html += '<script type="text/javascript">window.myBar = new Chart(document.getElementById("canvas-days").getContext("2d")).Bar({ labels : [' + label.join(',') + '], datasets : [{ fillColor : "#597BA8", highlightFill: "#82A2CD", data : [' + data.join(',') + '] }]});</script>';
 
 
             html += '<div class="clear_fix"><div class="stats_head">ТОП-10 записей</div></div>';
