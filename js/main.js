@@ -295,7 +295,7 @@ function stat(id) {
                 data.push(days[key].count);
             }
 
-            html += '<center><div style="width: 500px; height: 380px;"><canvas id="graph-days" style="width: 500px; height: 370px;"></canvas></div></center>';
+            html += '<center><div style="width: 500px; height: 380px;"><canvas id="graph-days" width="500px" height="370px"></canvas></div></center>';
             html += '<script type="text/javascript">window.myBar = new Chart(document.getElementById("graph-days").getContext("2d")).Bar({ labels : [' + label.join(',') + '], datasets : [{ fillColor : "#597BA8", highlightFill: "#82A2CD", data : [' + data.join(',') + '] }]});</script>';
 
 
