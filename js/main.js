@@ -255,10 +255,14 @@ function stat(id) {
             html += '<script type="text/javascript">window.myPie = new Chart(document.getElementById("chart-wall").getContext("2d")).Pie([' + arr.join(',') + ']);</script>';
 
             dates = array_count_values(dates);
-            console.log(dates.length);
+
+            var dates_count = 0;
+            for (key in dates) dates_count++;
+
+            console.log(dates_count);
             console.log(dates);
 
-            if (dates.length > 1) {
+            if (dates_count > 1) {
                 html += '<div class="clear_fix"><div class="stats_head">Записи по годам</div></div>';
                 html += '<center><div style="width: 500px; height: 380px;"><canvas id="canvas-year" height="316" width="500" style="width: 500px; height: 316px;"></canvas></div></center>';
 
