@@ -275,7 +275,7 @@ function stat(id) {
 
             if (dates_count > 1) {
                 html += '<div class="clear_fix"><div class="stats_head">Записи по годам</div></div>';
-                html += '<center><div style="width: 500px; height: 380px;"><canvas id="canvas-year" style="width: 500px; height: 316px;"></canvas></div></center>';
+                html += '<center><div style="width: 500px; height: 270px;"><canvas id="canvas-year" style="width: 500px; height: 316px;"></canvas></div></center>';
 
                 var dates_chart_year = [];
                 var dates_chart_count = [];
