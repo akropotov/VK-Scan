@@ -214,6 +214,15 @@ function stat(id) {
             posts = window.posts;
 
             var i = 0, arr = [], dates = [], likes = 0, comments = 0, reposts = 0, attachments = 0, attachments_array = [], attachments_chart = [];
+            var days = {
+                0: { count: 0, name: 'вс' },
+                1: { count: 0, name: 'пн' },
+                2: { count: 0, name: 'вт' },
+                3: { count: 0, name: 'ср' },
+                4: { count: 0, name: 'чт' },
+                5: { count: 0, name: 'пт' },
+                6: { count: 0, name: 'сб' }
+            };
 
             posts.map(function(post) {
                 likes += post.likes;
@@ -225,8 +234,13 @@ function stat(id) {
                     attachments_array.push(attach);
                 });
 
-                dates.push(new Date(parseInt(post.date, 10)*1000).getFullYear());
+                dates.push(new Date(post.date*1000).getFullYear());
+                days[(new Date(post.date*1000).getDay())].count++;
             });
+
+            days[7] = days[0];
+            delete days[0];
+
             attachments_array = array_count_values(attachments_array);
 
             for (var key in attachments_array) {
@@ -261,7 +275,7 @@ function stat(id) {
 
             if (dates_count > 1) {
                 html += '<div class="clear_fix"><div class="stats_head">Записи по годам</div></div>';
-                html += '<center><div style="width: 500px; height: 380px;"><canvas id="canvas-year" height="316" width="500" style="width: 500px; height: 316px;"></canvas></div></center>';
+                html += '<center><div style="width: 500px; height: 380px;"><canvas id="canvas-year" style="width: 500px; height: 316px;"></canvas></div></center>';
 
                 var dates_chart_year = [];
                 var dates_chart_count = [];
@@ -272,6 +286,18 @@ function stat(id) {
                 }
                 html += '<script type="text/javascript">var lineChartData = {labels : [' + dates_chart_year.join(',') + '],datasets : [{fillColor : "#DAE2E9",strokeColor : "#597DA3",pointColor : "rgba(151,187,205,1)",pointStrokeColor : "#fff",pointHighlightFill : "#fff",pointHighlightStroke : "rgba(151,187,205,1)",data : [' + dates_chart_count.join(',') + ']}]}; window.myLine = new Chart(document.getElementById("canvas-year").getContext("2d")).Line(lineChartData, { responsive: true });</script>';
             };
+
+            html += '<div class="clear_fix"><div class="stats_head">Записи по дням</div></div>';
+
+            var label = [], data = [];
+            for (key in days) {
+                label.push(days[key].name);
+                data.push(days[key].count);
+            }
+
+            html += '<center><div style="width: 500px; height: 380px;"><canvas id="canvas-days" style="width: 500px; height: 316px;"></canvas></div></center>';
+            html += '<script type="text/javascript">window.myBar = new Chart(document.getElementById("canvas-days").getContext("2d")).Bar({ labels : [' + label.join(',') + '], datasets : [{ fillColor : "#597BA8", highlightFill: "#82A2CD", data : [' + data.join(',') + '] }]});</script>';
+
 
             html += '<div class="clear_fix"><div class="stats_head">ТОП-10 записей</div></div>';
 
