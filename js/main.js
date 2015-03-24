@@ -255,6 +255,8 @@ function stat(id) {
             html += '<script type="text/javascript">window.myPie = new Chart(document.getElementById("chart-wall").getContext("2d")).Pie([' + arr.join(',') + ']);</script>';
 
             dates = array_count_values(dates);
+            console.log(dates.length);
+            console.log(dates);
 
             if (dates.length > 1) {
                 html += '<div class="clear_fix"><div class="stats_head">Записи по годам</div></div>';
