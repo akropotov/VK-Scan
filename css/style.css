@@ -287,17 +287,17 @@ a:hover {
   padding-top: 5px;
 }
 .apps_edit_add_panel {
-  background: #eff1f3;
+  background: #597BA8;
   padding: 20px;
   text-align: center;
   border-bottom: 1px solid #e4e8ed;
-  color: #738392;
+  color: #fff;
   font-size: 1.18em;
   line-height: 16px;
   display: block;
 }
 .apps_edit_add_panel:hover {
-  background: #e9edf1;
+  background: #82A2CD;
   text-decoration: none;
 }
 table.tarif {
