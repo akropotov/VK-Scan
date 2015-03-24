@@ -291,7 +291,7 @@ function stat(id) {
 
             var label = [], data = [];
             for (key in days) {
-                label.push(days[key].name.toString());
+                label.push('\'' + days[key].name + '\'');
                 data.push(days[key].count);
             }
 
