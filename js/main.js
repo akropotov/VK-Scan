@@ -294,7 +294,7 @@ function stat(id) {
             var popukar_like = posts[0];
             i = 0;
             for (var i = 0; i < posts.length; i++) {
-                html += '<a class="nav" href="//vk.com/wall' + id + '_' + posts[i].id + '" target="_blank">vk.com/wall' + id + '_' + posts[i].id + '<div class="fl_r like">' + number_format(posts[i].likes, 0, '.', ' ') + '</div></a>';
+                html += '<a class="nav" href="//vk.com/wall' + id + '_' + posts[i].id + '" target="_blank">vk.com/wall' + id + '_' + posts[i].id + '<div class="fl_r">' + number_format(posts[i].likes, 0, '.', ' ') + '</div></a>';
                 if (i == 9) break;
             };
 
