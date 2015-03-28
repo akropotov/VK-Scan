@@ -332,12 +332,6 @@ function stat(id) {
             });
             
             $('#block_commentator').click(function() {
-                window.posts.sort(function(a, b) {
-                    if (a.id < b.id) return 1;
-                    if (a.id > b.id) return -1;
-                    return 0;
-                });
-
                 window.i = 0;
                 window.i_end = window.posts.length;
                 window.offset = 0;
@@ -566,8 +560,15 @@ function comments_get() {
                 });
                 
                 $('#content').animate({'opacity': 'show'}, function() {
+                    console.log(top_comments[0]);
+                    console.log(top_likes[0]);
+                    console.log(comments[0]);
+                    console.log(info);
+                    console.log(window.oid);
+
                     if (window.oid > 0) {
-                        VK.api('wall.post', { owner_id: window.oid, attachments: 'photo877281_360313025', message: 'Статистика комментариев на моей странице.\n\nНаибольшее количество комментариев оставил' + ((info[top_comments[0].id].sex == 1) ? 'a' : '') + ' [id' +top_comments[0].id + '|' + info[top_comments[0].id].name + '] — ' + number_format(top_comments[0].count, 0, '.', ' ') + '.\nНаибольшее число лайков в комментариях собрал' + ((info[top_likes[0].id].sex == 1) ? 'a' : '') + ' [id' + top_likes[0].id + '|' + info[top_likes[0].id].name + '] — ' + number_format(top_likes[0].likes, 0, '.', ' ') + '.\nСамый популярный комментарий оставил' + ((info[comments[0].from_id].sex == 1) ? 'a' : '') + ' [id' + comments[0].from_id + '|' + info[comments[0].from_id].name + '] (vk.com/wall' + window.oid + '_' + comments[0].post_id + '?reply=' + comments[0].id + ') — ' + number_format(comments[0].likes, 0, '.', ' ') + '.' });
+                        var wall = (window.user_id == window.oid) ? 'моей' : 'твоей';
+                        VK.api('wall.post', { owner_id: window.oid, attachments: 'photo877281_360313025', message: 'Статистика комментариев на ' + wall + ' странице.\n\nНаибольшее количество комментариев оставил' + ((info[top_comments[0].id].sex == 1) ? 'a' : '') + ' [id' +top_comments[0].id + '|' + info[top_comments[0].id].name + '] — ' + number_format(top_comments[0].count, 0, '.', ' ') + '.\nНаибольшее число лайков в комментариях собрал' + ((info[top_likes[0].id].sex == 1) ? 'a' : '') + ' [id' + top_likes[0].id + '|' + info[top_likes[0].id].name + '] — ' + number_format(top_likes[0].likes, 0, '.', ' ') + '.\nСамый популярный комментарий оставил' + ((info[comments[0].from_id].sex == 1) ? 'a' : '') + ' [id' + comments[0].from_id + '|' + info[comments[0].from_id].name + '] (vk.com/wall' + window.oid + '_' + comments[0].post_id + '?reply=' + comments[0].id + ') — ' + number_format(comments[0].likes, 0, '.', ' ') + '.' });
                     };
 
                     VK.callMethod('resizeWindow', 627, $('#content').height());
