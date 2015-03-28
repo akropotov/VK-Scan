@@ -330,8 +330,14 @@ function stat(id) {
                     main();
                 });
             });
-
+            
             $('#block_commentator').click(function() {
+                window.posts.sort(function(a, b) {
+                    if (a.id < b.id) return 1;
+                    if (a.id > b.id) return -1;
+                    return 0;
+                });
+
                 window.i = 0;
                 window.i_end = window.posts.length;
                 window.offset = 0;
