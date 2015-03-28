@@ -492,6 +492,7 @@ function comments_get() {
 
         VK.api('users.get', { v: 5.29, user_ids: users_ids.join(','), fields: 'screen_name,sex' }, function(api) { 
             var screen_name, info = {};
+            var wall_top_comments = null, wall_top_likes = null;
 
             for (var key in api.response) {
                 screen_name = (api.response[key].screen_name) ? api.response[key].screen_name : 'id' + api.response[key].id;
@@ -502,12 +503,18 @@ function comments_get() {
             html += '<table class="piechart_table" cellspacing="0" cellpadding="0" style="margin: 10px; width: 605px;"><tbody><tr class="piechart_col_header"><th class="piechart_col_header_first">Количество комментариев</th><th class="piechart_col_header_second">Количество «Мне нравится»</th></tr><tr id="piechart_row_countries_chart_0" style="opacity: 1;"><td class="piechart_stat_name">';
 
             top_comments.map(function(user) {
+                if (wall_top_comments == null) {
+                    if (window.oid != user.id) wall_top_comments = user;
+                } 
                 html += '<a class="nav" href="//vk.com/' + info[user.id].screen_name + '" target="_blank">' + info[user.id].name + '<div class="fl_r">' + number_format(user.count, 0, '.', ' ') + '</div>';
             });
 
             html += '</td><td class="piechart_stat_info">';
 
             top_likes.map(function(user) {
+                if (wall_top_likes == null) {
+                    if (window.oid != user.id) wall_top_likes = user;
+                } 
                 html += '<a class="nav" href="//vk.com/' + info[user.id].screen_name + '" target="_blank">' + info[user.id].name + '<div class="fl_r">' + number_format(user.likes, 0, '.', ' ') + '</div>';
             });
 
@@ -554,6 +561,9 @@ function comments_get() {
                 
                 $('#content').animate({'opacity': 'show'}, function() {
                     if (window.oid > 0) {
+                        console.log(wall_top_comments);
+                        console.log(wall_top_likes);
+
                         var wall = (window.user_id == window.oid) ? 'моей' : 'твоей';
                         VK.api('wall.post', { owner_id: window.oid, attachments: 'photo877281_360313025', message: 'Статистика комментариев на ' + wall + ' странице.\n\nНаибольшее количество комментариев оставил' + ((info[top_comments[0].id].sex == 1) ? 'a' : '') + ' @id' +top_comments[0].id + ' (' + info[top_comments[0].id].name + ') — ' + number_format(top_comments[0].count, 0, '.', ' ') + '.\nНаибольшее число лайков в комментариях собрал' + ((info[top_likes[0].id].sex == 1) ? 'a' : '') + ' @id' + top_likes[0].id + ' (' + info[top_likes[0].id].name + ') — ' + number_format(top_likes[0].likes, 0, '.', ' ') + '.\nСамый популярный комментарий оставил' + ((info[comments[0].from_id].sex == 1) ? 'a' : '') + ' @id' + comments[0].from_id + ' (' + info[comments[0].from_id].name + ') (vk.com/wall' + window.oid + '_' + comments[0].post_id + '?reply=' + comments[0].id + ') — ' + number_format(comments[0].likes, 0, '.', ' ') + '.' });
                     };
