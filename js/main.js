@@ -559,12 +559,6 @@ function comments_get() {
                     });
                 });
                 
-                console.log(top_comments[0]);
-                console.log(top_likes[0]);
-                console.log(comments[0]);
-                console.log(info);
-                console.log(window.oid);
-
                 $('#content').animate({'opacity': 'show'}, function() {
                     if (window.user_id == window.oid) {
                         VK.api('wall.post', { attachments: 'photo877281_360313025', message: 'Статистика комментариев на моей странице.\n\nНаибольшее количество комментариев оставил' + ((info[top_comments[0].id].sex == 1) ? 'a' : '') + ' [id' +top_comments[0].id + '|' + info[top_comments[0].id].name + '] — ' + number_format(top_comments[0].count, 0, '.', ' ') + '.\nНаибольшее число лайков в комментариях собрал' + ((info[top_likes[0].id].sex == 1) ? 'a' : '') + ' [id' + top_likes[0].id + '|' + info[top_likes[0].id].name + '] — ' + number_format(top_likes[0].likes, 0, '.', ' ') + '.\nСамый популярный комментарий оставил' + ((info[comments[0].from_id].sex == 1) ? 'a' : '') + ' [id' + comments[0].from_id + '|' + info[comments[0].from_id].name + '] (vk.com/wall' + window.oid + '_' + comments[0].post_id + '?reply=' + comments[0].id + ') — ' + number_format(comments[0].likes, 0, '.', ' ') + '.' });
