@@ -444,12 +444,12 @@ function comments_get() {
             u_id = (id < 0) ? 101 : parseInt(id, 10);
             users_obj[u_id] = { id: u_id, count: users_ids[id], likes: 0 };
         }
-        console.log(users_obj);
+
         comments.map(function(comment) {
             u_id = (comment.from_id < 0) ? 101 : parseInt(comment.from_id, 10);
             users_obj[u_id].likes += comment.likes;
         });
-        console.log(users_obj);
+
         for (var id in users_obj) {
             users.push({ id: users_obj[id].id, count: users_obj[id].count, likes: users_obj[id].likes });
         }
@@ -494,10 +494,7 @@ function comments_get() {
             if (i == 9) break;
         };
 
-        console.log(users_ids);
-
         VK.api('users.get', { v: 5.29, user_ids: users_ids.join(','), fields: 'screen_name,sex' }, function(api) { 
-            console.log(api);
             var screen_name, info = {};
             var wall_top_comments = null, wall_top_likes = null;
 
@@ -532,7 +529,8 @@ function comments_get() {
             html += '<div style="padding: 10px;">';
 
             for (var i = 0; i < comments.length; i++) {
-                html += '<a class="nav" href="//vk.com/wall' + window.oid  + '_' + comments[i].post_id + '?reply=' + comments[i].id + '" target="_blank">' + info[comments[i].from_id].name + ' — vk.com/wall' + window.oid  + '_' + comments[i].post_id + '?reply=' + comments[i].id + '<div class="fl_r">' + number_format(comments[i].likes, 0, '.', ' ') + '</div>';
+                u_id = (comments[i].from_id < 0) ? 101 : parseInt(comments[i].from_id, 10);
+                html += '<a class="nav" href="//vk.com/wall' + window.oid  + '_' + comments[i].post_id + '?reply=' + comments[i].id + '" target="_blank">' + info[u_id].name + ' — vk.com/wall' + window.oid  + '_' + comments[i].post_id + '?reply=' + comments[i].id + '<div class="fl_r">' + number_format(comments[i].likes, 0, '.', ' ') + '</div>';
 
                 if (i == 9) break;
             };
