@@ -447,9 +447,12 @@ function comments_get() {
             users_obj[comment.from_id].likes += comment.likes;
         });
         console.log(users_obj);
+        var o_id;
         for (var id in users_obj) {
-            users.push({ id: users_obj[id].id, count: users_obj[id].count, likes: users_obj[id].likes });
+        	o_id = (id < 0) ? 101 : id ;
+            users.push({ id: o_id, count: users_obj[id].count, likes: users_obj[id].likes });
         }
+        console.log(users_obj);
         users.sort(function(a, b) {
             if (a.count < b.count) return 1;
             if (a.count > b.count) return -1;
