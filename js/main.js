@@ -444,12 +444,12 @@ function comments_get() {
             u_id = (id < 0) ? 101 : parseInt(id, 10);
             users_obj[u_id] = { id: u_id, count: users_ids[id], likes: 0 };
         }
-        console.log('1:' + users_obj);
+        console.log(users_obj);
         comments.map(function(comment) {
             u_id = (comment.from_id < 0) ? 101 : parseInt(comment.from_id, 10);
             users_obj[u_id].likes += comment.likes;
         });
-        console.log('2:' + users_obj);
+        console.log(users_obj);
         for (var id in users_obj) {
             users.push({ id: users_obj[id].id, count: users_obj[id].count, likes: users_obj[id].likes });
         }
