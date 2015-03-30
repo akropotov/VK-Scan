@@ -442,10 +442,12 @@ function comments_get() {
         users_ids = array_count_values(users_ids);
         for (var id in users_ids) {
             u_id = (id < 0) ? 101 : parseInt(id, 10);
+            console.log('1': u_id + ' / ' id);
             users_obj[u_id] = { id: u_id, count: users_ids[id], likes: 0 };
         }
         comments.map(function(comment) {
             u_id = (comment.from_id < 0) ? 101 : parseInt(comment.from_id, 10);
+            console.log('2': u_id + ' / ' comment.from_id);
             users_obj[u_id].likes += comment.likes;
         });
         for (var id in users_obj) {
