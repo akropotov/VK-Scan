@@ -441,18 +441,18 @@ function comments_get() {
 
         users_ids = array_count_values(users_ids);
         for (var id in users_ids) {
-            users_obj[id] = { id: id, count: users_ids[id], likes: 0 };
+            u_id = (id < 0) ? 101 : parseInt(id, 10);
+            console.log('1:' + u_id + ' / ' + id);
+            users_obj[u_id] = { id: u_id, count: users_ids[id], likes: 0 };
         }
         comments.map(function(comment) {
-            users_obj[comment.from_id].likes += comment.likes;
+            u_id = (comment.from_id < 0) ? 101 : parseInt(comment.from_id, 10);
+            console.log('2:' + u_id + ' / ' + comment.from_id);
+            users_obj[u_id].likes += comment.likes;
         });
-        console.log(users_obj);
-        var o_id;
         for (var id in users_obj) {
-        	o_id = (id < 0) ? 101 : id ;
-            users.push({ id: o_id, count: users_obj[id].count, likes: users_obj[id].likes });
+            users.push({ id: users_obj[id].id, count: users_obj[id].count, likes: users_obj[id].likes });
         }
-        console.log(users_obj);
         users.sort(function(a, b) {
             if (a.count < b.count) return 1;
             if (a.count > b.count) return -1;
