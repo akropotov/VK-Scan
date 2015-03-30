@@ -477,7 +477,8 @@ function comments_get() {
         var top_likes = [];
         for (var i = 0; i < users.length; i++) {
             top_likes.push(users[i]);
-            users_ids.push(users[i].id);
+            u_id = (users[i].id < 0) ? 101 : parseInt(users[i].id, 10);
+            users_ids.push(u_id);
             if (i == 9) break;
         };
 
@@ -488,7 +489,8 @@ function comments_get() {
         });
 
         for (var i = 0; i < comments.length; i++) {
-            users_ids.push(comments[i].from_id);
+            u_id = (comments[i].from_id < 0) ? 101 : parseInt(comments[i].from_id, 10);
+            users_ids.push(u_id);
             if (i == 9) break;
         };
 
