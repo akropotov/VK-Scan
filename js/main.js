@@ -497,6 +497,7 @@ function comments_get() {
         console.log(users_ids);
 
         VK.api('users.get', { v: 5.29, user_ids: users_ids.join(','), fields: 'screen_name,sex' }, function(api) { 
+            console.log(api);
             var screen_name, info = {};
             var wall_top_comments = null, wall_top_likes = null;
 
