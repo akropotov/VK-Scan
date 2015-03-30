@@ -441,7 +441,7 @@ function comments_get() {
 
         users_ids = array_count_values(users_ids);
         for (var id in users_ids) {
-            users_obj[u_id] = { id: id, count: users_ids[id], likes: 0 };
+            users_obj[id] = { id: id, count: users_ids[id], likes: 0 };
         }
         comments.map(function(comment) {
             users_obj[comment.from_id].likes += comment.likes;
