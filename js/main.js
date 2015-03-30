@@ -524,6 +524,7 @@ function comments_get() {
             html += '<div class="clear_fix"><div class="stats_head">ТОП-10 комментариев по количеству «Мне нравится»</div></div>';
             html += '<div style="padding: 10px;">';
 
+            console.log(comments);
             for (var i = 0; i < comments.length; i++) {
                 html += '<a class="nav" href="//vk.com/wall' + window.oid  + '_' + comments[i].post_id + '?reply=' + comments[i].id + '" target="_blank">' + info[comments[i].from_id].name + ' — vk.com/wall' + window.oid  + '_' + comments[i].post_id + '?reply=' + comments[i].id + '<div class="fl_r">' + number_format(comments[i].likes, 0, '.', ' ') + '</div>';
 
