@@ -1,6 +1,8 @@
 jQuery(document).ready(function() {
     $('#content').animate({'opacity': 'show'});
     VK.init(function() { 
+        console.log(getUrlParameter('viewer_id'));
+        console.log(getUrlParameter('hash'));
         if (location.href.split('hash=')[1].length > 1) {
             get_id(location.href.split('hash=')[1]);
         } else {
@@ -71,6 +73,19 @@ function declOfNum(number, titles) {
     cases = [2, 0, 1, 1, 1, 2];
     return titles[ (number%100>4 && number%100<20)? 2 : cases[(number%10<5)?number%10:5] ];
 }
+
+function getUrlParameter(sParam) {
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++) 
+    {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam) 
+        {
+            return sParameterName[1];
+        }
+    }
+}  
 
 function number_format(number, decimals, dec_point, thousands_sep) {
     var i, j, kw, kd, km;
