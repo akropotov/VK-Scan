@@ -2,7 +2,7 @@ jQuery(document).ready(function() {
     $('#content').animate({'opacity': 'show'});
     VK.init(function() { 
         console.log(getUrlParameter('viewer_id'));
-        console.log(getUrlParameter('hash'));
+        console.log(getUrlParameter('hash').length);
         if (location.href.split('hash=')[1].length > 1) {
             get_id(location.href.split('hash=')[1]);
         } else {
