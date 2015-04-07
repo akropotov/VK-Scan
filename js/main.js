@@ -14,19 +14,57 @@ jQuery(document).ready(function() {
 function main() {
     VK.api('execute', { https: 1, code: 'var user=API.users.get({"fields":"screen_name,photo_50"});var wall=API.wall.get({filter:"owner",count:1});var group=API.groups.get({"extended":1,"filter":"moder","count":30,"fields":"members_count"});var a=0;var b=group.items.length;var error=false;var limit_list=[];while(a<b){if(group.items[a].members_count>=100){limit_list.push(group.items[a]);}a=a+1;};if(limit_list.length<group.count){error="limit_user";}if(limit_list.length==0){error="no_groups";}return{"user":{"id":user[0].id,"screen_name":user[0].screen_name,"name":user[0].first_name+" "+user[0].last_name,"photo":user[0].photo_50,"posts":wall.count},"groups":{"alert":error,"items":limit_list}};' }, function(data) { 
         window.user_id = data.response.user.id;
-        var html = '<div id="im_rows0" class="im_rows"><div id="objects">'; 
+        var html = '<div id="im_rows0" class="im_rows">\
+                        <div id="objects">\
+                            <div class="dev_header">\
+                                <div style="margin-top: 4px;"class="fl_r">\
+                                    <button id="donate">Поддержать приложение</button>\
+                                </div>\
+                                <table>\
+                                    <tbody>\
+                                        <tr>\
+                                            <td>\
+                                                <table id="settings_addr_table"cellspacing="0"cellpadding="0">\
+                                                    <tbody>\
+                                                        <tr>\
+                                                            <td class="settings_edit_addr_label noselect">\
+                                                                http://vk.com/\
+                                                            </td>\
+                                                            <td class="settings_addr_field">\
+                                                                <input id="settings_addr" maxlength="32" type="text" class="text settings_addr" placeholder="durov">\
+                                                            </td>\
+                                                        </tr>\
+                                                    </tbody>\
+                                                </table>\
+                                            </td>\
+                                            <td>\
+                                                <button id="scan">Сканировать</button>\
+                                            </td>\
+                                        </tr>\
+                                    </tbody>\
+                                </table>\
+                                <div class="send_don" style="display: none;">\
+                                <input id="votes" type="text" onkeyup="this.value=parseInt(this.value) | 0" class="donate" placeholder="Сумма пожертвования в голосах">\
+                                    <button id="donate_ok" class="ok">Отправить пожертвование</button>\
+                                </div>\
+                            </div>\
+                            <div id="' + data.response.user.screen_name + '" class="object">\
+                                <div class="im_photo">\
+                                    <img src="' + data.response.user.photo + '" class="fl_l" width="43" height="43">\
+                                </div>\
+                                <div class="fl_l name">\
+                                    <nobr>' + data.response.user.name + '</nobr>\
+                                </div>\
+                            </div>';  
+                            if (data.response.groups.alert == 'limit_user') html += '<div id="settings_save_msg" class="msg">Отображаются лишь сообщества в которых есть <b>100</b> участников.</div>';
+                            if (data.response.groups.alert == 'no_groups') html += '<div id="settings_save_msg" class="msg">У вас нет сообществ.</div>';
 
-        html += '<div class="dev_header"><div style="margin-top: 4px;"class="fl_r"><button id="donate">Поддержать приложение</button></div><table><tbody><tr><td><table id="settings_addr_table"cellspacing="0"cellpadding="0"><tbody><tr><td class="settings_edit_addr_label noselect"><nobr>http://vk.com/</td><td class="settings_addr_field"><input id="settings_addr" maxlength="32" type="text" class="text settings_addr" placeholder="durov"></td></tr></tbody></table></td><td><button id="scan">Сканировать</button></td></tr></tbody></table><div class="send_don" style="display: none;"><input id="votes" type="text" onkeyup="this.value=parseInt(this.value) | 0" class="donate" placeholder="Сумма пожертвования в голосах"><button id="donate_ok" class="ok">Отправить пожертвование</button></div></div>';
+                            data.response.groups.items.map(function(group) {
+                                html += '<div id="' + group.screen_name + '" class="object"><div class="im_photo"><img src="' + group.photo_50 + '" class="fl_l" width="43" height="43"></div><div class="fl_l name"><nobr>' + group.name + '</nobr></div><div class="online">' + number_format(group.members_count, 0, '.', ' ') + ' ' + declOfNum(group.members_count, ['участник', 'участника', 'участников']) + '</div></div>';  
+                            });
 
-        html += '<div id="' + data.response.user.screen_name + '" class="object"><div class="im_photo"><img src="' + data.response.user.photo + '" class="fl_l" width="43" height="43"></div><div class="fl_l name"><nobr>' + data.response.user.name + '</nobr></div></div>';  
-        if (data.response.groups.alert == 'limit_user') html += '<div id="settings_save_msg" class="msg">Отображаются лишь сообщества в которых есть <b>100</b> участников.</div>';
-        if (data.response.groups.alert == 'no_groups') html += '<div id="settings_save_msg" class="msg">У вас нет сообществ.</div>';
-
-        data.response.groups.items.map(function(group) {
-            html += '<div id="' + group.screen_name + '" class="object"><div class="im_photo"><img src="' + group.photo_50 + '" class="fl_l" width="43" height="43"></div><div class="fl_l name"><nobr>' + group.name + '</nobr></div><div class="online">' + number_format(group.members_count, 0, '.', ' ') + ' ' + declOfNum(group.members_count, ['участник', 'участника', 'участников']) + '</div></div>';  
-        });
-
-        html += '</div></div>';
+            html +=     '</div>\
+                    </div>';
 
         $('#content').animate({'opacity': 'hide'}, function() {
             $('#content').html(html);
@@ -146,7 +184,21 @@ function array_count_values(array) {
 function get_id(screen_name) {
     VK.api('execute', { https: 1, code: 'var screen_name="' + screen_name + '";var api=API.utils.resolveScreenName({screen_name:screen_name});if(api.length>0){if(api.type=="user"){var user=API.users.get({user_ids:api.object_id,fields:"photo_50"});var wall=API.wall.get({filter:"owner",owner_id:api.object_id});return{id:user[0].id,photo:user[0].photo_50,posts:wall.count};}else if(api.type=="group"){var group=API.groups.getById({group_id:api.object_id,fields:"photo_50"});var wall=API.wall.get({filter:"owner",owner_id:"-"+api.object_id});return{id:"-"+group[0].id,photo:group[0].photo_50,posts:wall.count};}else return{error:"is not user or group"};}else return{error:"incorrect screen_name"};' }, function(info) { 
         if (info.response.posts > 10) {
-            html = '<div class="wall_loader"><div class="user"><img src="' + info.response.photo + '" class="loader_user"></div><div class="wall_upload_progress_panel"><div class="wall_upload_progress_back_percent progress_text"></div><div class="wall_upload_progress_front progress_line"><div class="wall_upload_progress_front_indicator"><span class="wall_upload_progress_front_percent progress_text"></span></div></div><div class="wall_upload_progress progress_line"></div></div></div>';
+            html = '<div class="wall_loader">\
+                        <div class="user">\
+                            <img src="' + info.response.photo + '" class="loader_user">\
+                        </div>\
+                        <div class="wall_upload_progress_panel">\
+                            <div class="wall_upload_progress_back_percent progress_text"></div>\
+                            <div class="wall_upload_progress_front progress_line">\
+                                <div class="wall_upload_progress_front_indicator">\
+                                    <span class="wall_upload_progress_front_percent progress_text"></span>\
+                                </div>\
+                            </div>\
+                            <div class="wall_upload_progress progress_line"></div>\
+                        </div>\
+                    </div>';
+
             window.offset = 0;
             window.posts_count = info.response.posts;
             window.posts = [];
@@ -158,7 +210,9 @@ function get_id(screen_name) {
             window.oid = info.response.id;
             stat(info.response.id);
         } else {
-            html = '<div class="wall_loader"><div class="user">Недостаточно записей. <a id="home">На главную »</a></div></div></div>';
+            html = '<div class="wall_loader">\
+                        <div class="user">Недостаточно записей. <a id="home">На главную »</a></div>\
+                    </div>';
             $('#content').html(html);
             $('#home').click(function() {
                 main();
@@ -207,7 +261,12 @@ function stat(id) {
                       { color: '#D75C56', light: '#E3928E' }];
 
         $('#content').animate({'opacity': 'hide'}, function() {
-            html = '<div class="dev_header"><div id="dev_header_name" class="dev_header_name"><a>Главная</a><span class="dev_raquo_parents"> » </span>Статистика</div></div>';
+            html = '<div class="dev_header">\
+                        <div id="dev_header_name" class="dev_header_name">\
+                            <a>Главная</a>\
+                            <span class="dev_raquo_parents"> » </span>Статистика\
+                        </div>\
+                    </div>';
             posts = window.posts;
 
             var i = 0, arr = [], dates = [], likes = 0, comments = 0, reposts = 0, attachments = 0, attachments_array = [], attachments_chart = [];
@@ -249,21 +308,45 @@ function stat(id) {
                 return 0;
             });
 
-            html += '<div style="padding: 10px;"><div class="c c_l">«Мне нравится» — ' + number_format(likes, 0, '.', ' ') + '</div><div class="c c_c">Комментариев — ' + number_format(comments, 0, '.', ' ') + '</div><div class="c c_r">Рассказать друзьям — ' + number_format(reposts, 0, '.', ' ') + '</div><div class="c c_a">Вложений в записях — ' + number_format(attachments, 0, '.', ' ') + '</div></div>';
-            html += '<div class="clear_fix"><div class="stats_head">Вложения в записях</div></div>';
+            html += '<div style="padding: 10px;">\
+                        <div class="c c_l">«Мне нравится» — ' + number_format(likes, 0, '.', ' ') + '</div>\
+                        <div class="c c_c">Комментариев — ' + number_format(comments, 0, '.', ' ') + '</div>\
+                        <div class="c c_r">Рассказать друзьям — ' + number_format(reposts, 0, '.', ' ') + '</div>\
+                        <div class="c c_a">Вложений в записях — ' + number_format(attachments, 0, '.', ' ') + '</div>\
+                    </div>\
+                    <div class="clear_fix">\
+                        <div class="stats_head">Вложения в записях</div>\
+                    </div>\
+                    <table>\
+                        <tbody>\
+                            <tr>\
+                                <td valign="top">\
+                                    <table class="piechart_table" cellspacing="0" cellpadding="0">\
+                                        <tbody>\
+                                            <tr class="piechart_col_header">\
+                                                <th class="piechart_col_header_first">тип вложения</th>\
+                                                <th class="piechart_col_header_second">количество</th>\
+                                            </tr>';
 
-            html += '<table><tbody><tr><td valign="top"><table class="piechart_table" cellspacing="0" cellpadding="0"><tbody><tr class="piechart_col_header"><th class="piechart_col_header_first">тип вложения</th><th class="piechart_col_header_second">количество</th></tr>';
+                                            i = 0;
+                                            arr = []
+                                            attachments_chart.map(function(att) {
+                                                html += '<tr id="piechart_row_countries_chart_0" style="opacity: 1;">\
+                                                            <td class="piechart_stat_name"><div class="piechart_stat_color" style="background-color: ' + colors[i].color + '"></div>' + att.type + '</td>\
+                                                            <td class="piechart_stat_info">' + att.count + '</td>\
+                                                        </tr>';
+                                                arr.push('{value: ' + att.count + ', color: "' + colors[i].color + '", highlight: "' + colors[i].light + '", label: "' + att.type + '"}');
+                                                i++;
+                                            });
 
-            i = 0;
-            arr = []
-            attachments_chart.map(function(att) {
-                html += '<tr id="piechart_row_countries_chart_0" style="opacity: 1;"><td class="piechart_stat_name"><div class="piechart_stat_color" style="background-color: ' + colors[i].color + '"></div>' + att.type + '</td><td class="piechart_stat_info">' + att.count + '</td></tr>';
-                arr.push('{value: ' + att.count + ', color: "' + colors[i].color + '", highlight: "' + colors[i].light + '", label: "' + att.type + '"}');
-                i++;
-            });
-
-            html += '</tbody></table></td><td><canvas id="chart-wall" width="270" height="200" style="width: 270px; height: 200px;"></canvas></td></tr></tbody></table>';
-            html += '<script type="text/javascript">window.myPie = new Chart(document.getElementById("chart-wall").getContext("2d")).Pie([' + arr.join(',') + ']);</script>';
+            html +=                     '</tbody>\
+                                    </table>\
+                                </td>\
+                                <td><canvas id="chart-wall" width="270" height="200" style="width: 270px; height: 200px;"></canvas></td>\
+                            </tr>\
+                        </tbody>\
+                    </table>\
+                    <script type="text/javascript">window.myPie = new Chart(document.getElementById("chart-wall").getContext("2d")).Pie([' + arr.join(',') + ']);</script>';
 
             dates = array_count_values(dates);
 
@@ -292,45 +375,59 @@ function stat(id) {
                 data.push(days[key].count);
             }
 
-            html += '<center><div style="width: 500px; height: 380px;"><canvas id="graph-days" width="500px" height="370px"></canvas></div></center>';
-            html += '<script type="text/javascript">window.myBar = new Chart(document.getElementById("graph-days").getContext("2d")).Bar({ labels : [' + label.join(',') + '], datasets : [{ fillColor : "#597BA8", highlightFill: "#82A2CD", data : [' + data.join(',') + '] }]});</script>';
+            html += '<center><div style="width: 500px; height: 380px;"><canvas id="graph-days" width="500px" height="370px"></canvas></div></center>\
+                    <script type="text/javascript">window.myBar = new Chart(document.getElementById("graph-days").getContext("2d")).Bar({ labels : [' + label.join(',') + '], datasets : [{ fillColor : "#597BA8", highlightFill: "#82A2CD", data : [' + data.join(',') + '] }]});</script>\
+                    <div class="clear_fix"><div class="stats_head">ТОП-10 записей</div></div>\
+                    <table class="piechart_table" cellspacing="0" cellpadding="0" style="margin: 10px; width: 605px;">\
+                        <tbody>\
+                            <tr class="piechart_col_header">\
+                                <th class="piechart_col_header_first">Количество «Мне нравится»</th>\
+                                <th class="piechart_col_header_second">Количество комментариев</th>\
+                            </tr>\
+                            <tr id="piechart_row_countries_chart_0" style="opacity: 1;">\
+                                <td class="piechart_stat_name">';
+                                posts.sort(function(a, b) {
+                                    if (a.likes < b.likes) return 1;
+                                    if (a.likes > b.likes) return -1;
+                                    return 0;
+                                });
+                                var popukar_like = posts[0];
+                                i = 0;
+                                for (var i = 0; i < posts.length; i++) {
+                                    html += '<a class="nav" href="//vk.com/wall' + id + '_' + posts[i].id + '" target="_blank">vk.com/wall' + id + '_' + posts[i].id + '<div class="fl_r">' + number_format(posts[i].likes, 0, '.', ' ') + '</div></a>';
+                                    if (i == 9) break;
+                                };
+            html +=             '</td>\
+                                <td class="piechart_stat_info">';
+                                posts.sort(function(a, b) {
+                                    if (a.comments < b.comments) return 1;
+                                    if (a.comments > b.comments) return -1;
+                                    return 0;
+                                });
+                                var popular_comment = posts[0];
+                                i = 0;
+                                for (var i = 0; i < posts.length; i++) {
+                                    html += '<a class="nav" href="//vk.com/wall' + id + '_' + posts[i].id + '" target="_blank">vk.com/wall' + id + '_' + posts[i].id + '<div class="fl_r">' + number_format(posts[i].comments, 0, '.', ' ') + '</div></a>';
+                                    if (i == 9) break;
+                                };
+            html +=             '</td>\
+                            </tr>\
+                        </tbody>\
+                    </table>';
 
+                    if (comments > 0) {
+                        html += '<div id="block_commentator">\
+                                    <a class="apps_edit_add_panel">\
+                                        <span class="apps_edit_add_icon">Определить лучшего комментатора</span>\
+                                    </a>\
+                                </div>';
+                    };
 
-            html += '<div class="clear_fix"><div class="stats_head">ТОП-10 записей</div></div>';
-
-            html += '<table class="piechart_table" cellspacing="0" cellpadding="0" style="margin: 10px; width: 605px;"><tbody><tr class="piechart_col_header"><th class="piechart_col_header_first">Количество «Мне нравится»</th><th class="piechart_col_header_second">Количество комментариев</th></tr><tr id="piechart_row_countries_chart_0" style="opacity: 1;"><td class="piechart_stat_name">';
-            posts.sort(function(a, b) {
-                if (a.likes < b.likes) return 1;
-                if (a.likes > b.likes) return -1;
-                return 0;
-            });
-            var popukar_like = posts[0];
-            i = 0;
-            for (var i = 0; i < posts.length; i++) {
-                html += '<a class="nav" href="//vk.com/wall' + id + '_' + posts[i].id + '" target="_blank">vk.com/wall' + id + '_' + posts[i].id + '<div class="fl_r">' + number_format(posts[i].likes, 0, '.', ' ') + '</div></a>';
-                if (i == 9) break;
-            };
-
-
-            html += '</td><td class="piechart_stat_info">';
-            posts.sort(function(a, b) {
-                if (a.comments < b.comments) return 1;
-                if (a.comments > b.comments) return -1;
-                return 0;
-            });
-            var popular_comment = posts[0];
-            i = 0;
-            for (var i = 0; i < posts.length; i++) {
-                html += '<a class="nav" href="//vk.com/wall' + id + '_' + posts[i].id + '" target="_blank">vk.com/wall' + id + '_' + posts[i].id + '<div class="fl_r">' + number_format(posts[i].comments, 0, '.', ' ') + '</div></a>';
-                if (i == 9) break;
-            };
-            html += '</td></tr></tbody></table>';
-
-            if (comments > 0) {
-                html += '<div id="block_commentator"><a class="apps_edit_add_panel"><span class="apps_edit_add_icon">Определить лучшего комментатора</span></a></div>';
-            };
-
-            html += '<div id="block_donate"><a class="apps_edit_add_panel block_donate"><span class="apps_edit_add_icon">Поддержать приложение</span></a></div>';
+            html += '<div id="block_donate">\
+                        <a class="apps_edit_add_panel block_donate">\
+                            <span class="apps_edit_add_icon">Поддержать приложение</span>\
+                        </a>\
+                    </div>';
             
             $('#content').html(html);
             
@@ -355,7 +452,18 @@ function stat(id) {
                 window.comments_end = comments;
 
                 $('#content').animate({'opacity': 'hide'}, function() {
-                    html = '<div class="wall_loader"><div class="wall_upload_progress_panel"><div class="wall_upload_progress_back_percent progress_text"></div><div class="wall_upload_progress_front progress_line"><div class="wall_upload_progress_front_indicator"><span class="wall_upload_progress_front_percent progress_text"></span></div></div><div class="wall_upload_progress progress_line"></div></div></div>';
+                    html = '<div class="wall_loader">\
+                                <div class="wall_upload_progress_panel">\
+                                    <div class="wall_upload_progress_back_percent progress_text"></div>\
+                                    <div class="wall_upload_progress_front progress_line">\
+                                        <div class="wall_upload_progress_front_indicator">\
+                                            <span class="wall_upload_progress_front_percent progress_text"></span>\
+                                        </div>\
+                                    </div>\
+                                    <div class="wall_upload_progress progress_line"></div>\
+                                </div>\
+                            </div>';
+
                     $('#content').html(html);
             
                     $('#content').animate({'opacity': 'show'}, function() {
@@ -369,7 +477,13 @@ function stat(id) {
             });
             $('.block_donate').click(function() {
                 $('#block_donate').animate({'opacity': 'hide'}, function() {
-                    $('#block_donate').html('<div class="clear_fix"><div class="stats_head">Поддержать приложение</div></div><div class="send_don" style="padding-left: 5px;"><input id="votes" type="text" onkeyup="this.value=parseInt(this.value) | 0" class="donate" placeholder="Сумма пожертвования"><button id="donate_ok" class="ok">Отправить пожертвование</button></div>');
+                    $('#block_donate').html('<div class="clear_fix">\
+                                                <div class="stats_head">Поддержать приложение</div>\
+                                            </div>\
+                                            <div class="send_don" style="padding-left: 5px;">\
+                                                <input id="votes" type="text" onkeyup="this.value=parseInt(this.value) | 0" class="donate" placeholder="Сумма пожертвования">\
+                                                <button id="donate_ok" class="ok">Отправить пожертвование</button>\
+                                            </div>');
                     $('#block_donate').animate({'opacity': 'show'}, function() {
                         VK.callMethod('resizeWindow', 627, $('#content').height());
 
@@ -426,7 +540,11 @@ function comments_get() {
     } else {
         var comments = window.comments, dates = [], users = [], users_obj = {}, users_ids = [];
         
-        html = '<div class="dev_header"><div id="dev_header_name" class="dev_header_name"><a>Главная</a><span class="dev_raquo_parents"> » </span>Статистика</div></div>';
+        html = '<div class="dev_header">\
+                    <div id="dev_header_name" class="dev_header_name">\
+                        <a>Главная</a><span class="dev_raquo_parents"> » </span>Статистика\
+                    </div>\
+                </div>';
 
         comments.map(function(comment) {
             dates.push(new Date(comment.date*1000).getFullYear());
@@ -439,8 +557,14 @@ function comments_get() {
         for (key in dates) year_count++;
 
         if (year_count > 1) {
-            html += '<div class="clear_fix"><div class="stats_head">Комментарии по годам</div></div>';
-            html += '<center><div style="width: 500px; height: 270px;"><canvas id="canvas-year" style="width: 500px; height: 316px;"></canvas></div></center>';
+            html += '<div class="clear_fix">\
+                        <div class="stats_head">Комментарии по годам</div>\
+                    </div>\
+                    <center>\
+                        <div style="width: 500px; height: 270px;">\
+                            <canvas id="canvas-year" style="width: 500px; height: 316px;"></canvas>\
+                        </div>\
+                    </center>';
 
             var dates_chart_year = [];
             var dates_chart_count = [];
@@ -516,40 +640,51 @@ function comments_get() {
                 info[api.response[key].id] = { screen_name: screen_name, sex: api.response[key].sex, name: api.response[key].first_name + ' ' + api.response[key].last_name };
             }
 
-            html += '<div class="clear_fix"><div class="stats_head">ТОП-10 комментаторов</div></div>';
-            html += '<table class="piechart_table" cellspacing="0" cellpadding="0" style="margin: 10px; width: 605px;"><tbody><tr class="piechart_col_header"><th class="piechart_col_header_first">Количество комментариев</th><th class="piechart_col_header_second">Количество «Мне нравится»</th></tr><tr id="piechart_row_countries_chart_0" style="opacity: 1;"><td class="piechart_stat_name">';
+            html += '<div class="clear_fix">\
+                        <div class="stats_head">ТОП-10 комментаторов</div>\
+                    </div>\
+                    <table class="piechart_table" cellspacing="0" cellpadding="0" style="margin: 10px; width: 605px;">\
+                        <tbody>\
+                            <tr class="piechart_col_header">\
+                                <th class="piechart_col_header_first">Количество комментариев</th>\
+                                <th class="piechart_col_header_second">Количество «Мне нравится»</th>\
+                            </tr>\
+                            <tr id="piechart_row_countries_chart_0" style="opacity: 1;">\
+                                <td class="piechart_stat_name">';
+                                top_comments.map(function(user) {
+                                    if (wall_top_comments == null) {
+                                        if (window.oid != user.id) wall_top_comments = user;
+                                    } 
+                                    html += '<a class="nav" href="//vk.com/' + info[user.id].screen_name + '" target="_blank">' + info[user.id].name + '<div class="fl_r">' + number_format(user.count, 0, '.', ' ') + '</div>';
+                                });
+            html +=             '</td>\
+                                <td class="piechart_stat_info">';
+                                top_likes.map(function(user) {
+                                    if (wall_top_likes == null) {
+                                        if (window.oid != user.id) wall_top_likes = user;
+                                    } 
+                                    html += '<a class="nav" href="//vk.com/' + info[user.id].screen_name + '" target="_blank">' + info[user.id].name + '<div class="fl_r">' + number_format(user.likes, 0, '.', ' ') + '</div>';
+                                });
+            html +=             '</td>\
+                            </tr>\
+                        </tbody>\
+                    </table>\
+                    <div class="clear_fix">\
+                        <div class="stats_head">ТОП-10 комментариев по количеству «Мне нравится»</div>\
+                    </div>\
+                    <div style="padding: 10px;">';
+                    for (var i = 0; i < comments.length; i++) {
+                        u_id = (comments[i].from_id < 0) ? 101 : parseInt(comments[i].from_id, 10);
+                        html += '<a class="nav" href="//vk.com/wall' + window.oid  + '_' + comments[i].post_id + '?reply=' + comments[i].id + '" target="_blank">' + info[u_id].name + ' — vk.com/wall' + window.oid  + '_' + comments[i].post_id + '?reply=' + comments[i].id + '<div class="fl_r">' + number_format(comments[i].likes, 0, '.', ' ') + '</div>';
 
-            top_comments.map(function(user) {
-                if (wall_top_comments == null) {
-                    if (window.oid != user.id) wall_top_comments = user;
-                } 
-                html += '<a class="nav" href="//vk.com/' + info[user.id].screen_name + '" target="_blank">' + info[user.id].name + '<div class="fl_r">' + number_format(user.count, 0, '.', ' ') + '</div>';
-            });
-
-            html += '</td><td class="piechart_stat_info">';
-
-            top_likes.map(function(user) {
-                if (wall_top_likes == null) {
-                    if (window.oid != user.id) wall_top_likes = user;
-                } 
-                html += '<a class="nav" href="//vk.com/' + info[user.id].screen_name + '" target="_blank">' + info[user.id].name + '<div class="fl_r">' + number_format(user.likes, 0, '.', ' ') + '</div>';
-            });
-
-            html += '</td></tr></tbody></table>';
-
-
-            html += '<div class="clear_fix"><div class="stats_head">ТОП-10 комментариев по количеству «Мне нравится»</div></div>';
-            html += '<div style="padding: 10px;">';
-
-            for (var i = 0; i < comments.length; i++) {
-                u_id = (comments[i].from_id < 0) ? 101 : parseInt(comments[i].from_id, 10);
-                html += '<a class="nav" href="//vk.com/wall' + window.oid  + '_' + comments[i].post_id + '?reply=' + comments[i].id + '" target="_blank">' + info[u_id].name + ' — vk.com/wall' + window.oid  + '_' + comments[i].post_id + '?reply=' + comments[i].id + '<div class="fl_r">' + number_format(comments[i].likes, 0, '.', ' ') + '</div>';
-
-                if (i == 9) break;
-            };
-            html += '</div>';
-
-            html += '<div id="block_donate"><a class="apps_edit_add_panel block_donate"><span class="apps_edit_add_icon">Поддержать приложение</span></a></div>';
+                        if (i == 9) break;
+                    };
+            html += '</div>\
+                    <div id="block_donate">\
+                        <a class="apps_edit_add_panel block_donate">\
+                            <span class="apps_edit_add_icon">Поддержать приложение</span>\
+                        </a>\
+                    </div>';
 
             $('#content').animate({'opacity': 'hide'}, function() {
                 $('#content').html(html);
@@ -562,7 +697,13 @@ function comments_get() {
 
                 $('.block_donate').click(function() {
                     $('#block_donate').animate({'opacity': 'hide'}, function() {
-                        $('#block_donate').html('<div class="clear_fix"><div class="stats_head">Поддержать приложение</div></div><div class="send_don" style="padding-left: 5px;"><input id="votes" type="text" onkeyup="this.value=parseInt(this.value) | 0" class="donate" placeholder="Сумма пожертвования"><button id="donate_ok" class="ok">Отправить пожертвование</button></div>');
+                        $('#block_donate').html('<div class="clear_fix">\
+                                                    <div class="stats_head">Поддержать приложение</div>\
+                                                </div>\
+                                                <div class="send_don" style="padding-left: 5px;">\
+                                                    <input id="votes" type="text" onkeyup="this.value=parseInt(this.value) | 0" class="donate" placeholder="Сумма пожертвования">\
+                                                    <button id="donate_ok" class="ok">Отправить пожертвование</button>\
+                                                </div>');
                         $('#block_donate').animate({'opacity': 'show'}, function() {
                             VK.callMethod('resizeWindow', 627, $('#content').height());
 
