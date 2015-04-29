@@ -419,6 +419,7 @@ function stat(id) {
                     </table>';
 
                     if (comments > 0) {
+                        window.comments_end = comments;
                         html += '<div id="block_commentator">\
                                     <a class="apps_edit_add_panel">\
                                         <span class="apps_edit_add_icon">Определить лучшего комментатора</span>\
@@ -509,7 +510,6 @@ function comments_func() {
     window.comments = [];
 
     window.comments_i = 0;
-    window.comments_end = comments;
 
     $('#content').animate({'opacity': 'hide'}, function() {
         html = '<div class="wall_loader">\
@@ -553,7 +553,7 @@ function comments_get() {
                         window.offset += 100;
 
                         var c = Math.round(window.comments_i/window.comments_end*100) + '%';
-                        $('.progress_text').html(window.comments_i + '/' +window.comments_end);
+                        $('.progress_text').html(window.comments_i + '/' + window.comments_end);
                         $('.progress_line').animate({'width': c}, 'fast');
 
                         setTimeout(function() { 
