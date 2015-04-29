@@ -182,7 +182,8 @@ function array_count_values(array) {
 }
 
 function get_id(screen_name) {
-    VK.api('execute', { https: 1, code: 'var screen_name="' + screen_name + '";var api=API.utils.resolveScreenName({screen_name:screen_name});if(api.length>0){if(api.type=="user"){var user=API.users.get({user_ids:api.object_id,fields:"photo_50"});var wall=API.wall.get({filter:"owner",owner_id:api.object_id});return{id:user[0].id,photo:user[0].photo_50,posts:wall.count};}else if(api.type=="group"){var group=API.groups.getById({group_id:api.object_id,fields:"photo_50"});var wall=API.wall.get({filter:"owner",owner_id:"-"+api.object_id});return{id:"-"+group[0].id,photo:group[0].photo_50,posts:wall.count};}else return{error:"is not user or group"};}else return{error:"incorrect screen_name"};' }, function(info) { 
+    VK.api('execute', { https: 1, code: 'var screen_name="' + screen_name + '";var api=API.utils.resolveScreenName({screen_name:screen_name});var statistics = API.storage.get({"key": "statistics"});var comments = API.storage.get({"key": "comments"});if(api.length>0){if(api.type=="user"){var user=API.users.get({user_ids:api.object_id,fields:"photo_50"});var wall=API.wall.get({filter:"owner",owner_id:api.object_id});return{id:user[0].id,photo:user[0].photo_50,posts:wall.count,statistics:statistics,comments:comments};}else if(api.type=="group"){var group=API.groups.getById({group_id:api.object_id,fields:"photo_50"});var wall=API.wall.get({filter:"owner",owner_id:"-"+api.object_id});return{id:"-"+group[0].id,photo:group[0].photo_50,posts:wall.count,statistics:statistics,comments:comments};}else return{error:"is not user or group"};}else return{error:"incorrect screen_name"};' }, function(info) { 
+        console.log(info); 
         if (info.response.posts > 10) {
             html = '<div class="wall_loader">\
                         <div class="user">\
@@ -202,6 +203,8 @@ function get_id(screen_name) {
             window.offset = 0;
             window.posts_count = info.response.posts;
             window.posts = [];
+            window.get_statistics = info.response.statistics;
+            window.get_comments = info.response.comments;
 
             $('#content').html(html);
             
@@ -420,6 +423,11 @@ function stat(id) {
                                     <a class="apps_edit_add_panel">\
                                         <span class="apps_edit_add_icon">Определить лучшего комментатора</span>\
                                     </a>\
+                                </div>\
+                                <div id="comments_pay">\
+                                    <img src="/VK-scan/img/pay.png" class="pay_icon">\
+                                    Для того, чтобы у вас появилась возможность анализировать комментарии страницы, нужно сделать единоразовый взнос в размере <b>9 голосов</b>. После чего, вы сможете без ограничений пользоваться данной функцией. \
+                                    <br><button id="comments_pay_button" class="ok">Купить</button>\
                                 </div>';
                     };
 
@@ -442,38 +450,60 @@ function stat(id) {
             });
             
             $('#block_commentator').click(function() {
-                window.i = 0;
-                window.i_end = window.posts.length;
-                window.offset = 0;
+                console.log(window.get_comments);
+                var comments_func = function() {
+                    window.i = 0;
+                    window.i_end = window.posts.length;
+                    window.offset = 0;
 
-                window.comments = [];
+                    window.comments = [];
 
-                window.comments_i = 0;
-                window.comments_end = comments;
+                    window.comments_i = 0;
+                    window.comments_end = comments;
 
-                $('#content').animate({'opacity': 'hide'}, function() {
-                    html = '<div class="wall_loader">\
-                                <div class="wall_upload_progress_panel">\
-                                    <div class="wall_upload_progress_back_percent progress_text"></div>\
-                                    <div class="wall_upload_progress_front progress_line">\
-                                        <div class="wall_upload_progress_front_indicator">\
-                                            <span class="wall_upload_progress_front_percent progress_text"></span>\
+                    $('#content').animate({'opacity': 'hide'}, function() {
+                        html = '<div class="wall_loader">\
+                                    <div class="wall_upload_progress_panel">\
+                                        <div class="wall_upload_progress_back_percent progress_text"></div>\
+                                        <div class="wall_upload_progress_front progress_line">\
+                                            <div class="wall_upload_progress_front_indicator">\
+                                                <span class="wall_upload_progress_front_percent progress_text"></span>\
+                                            </div>\
                                         </div>\
+                                        <div class="wall_upload_progress progress_line"></div>\
                                     </div>\
-                                    <div class="wall_upload_progress progress_line"></div>\
-                                </div>\
-                            </div>';
+                                </div>';
 
-                    $('#content').html(html);
-            
-                    $('#content').animate({'opacity': 'show'}, function() {
-                        VK.callMethod('resizeWindow', 627, 300);
+                        $('#content').html(html);
+                                
+                        $('#content').animate({'opacity': 'show'}, function() {
+                            VK.callMethod('resizeWindow', 627, 300);
+                        });
+
+                        $('.progress_line').animate({'width': '0%'}, 'slow');
+
+                        comments_get();
                     });
+                };
 
-                    $('.progress_line').animate({'width': '0%'}, 'slow');
+                if (window.get_comments) {
+                    comments_func();
+                } else {
+                    $('#block_commentator').animate({'opacity': 'hide'}, function() {
+                        $('#comments_pay').animate({'opacity': 'show'}, function() {
+                            VK.callMethod('resizeWindow', 627, $('#content').height());
 
-                    comments_get();
-                });
+                            $('#comments_pay_button').click(function() {
+                                var params = { 
+                                    type: 'item', 
+                                    item: 'comments' 
+                                }; 
+                                VK.callMethod('showOrderBox', params);
+                                window.order = 'comments';
+                            });
+                        });
+                    });
+                };
             });
             $('.block_donate').click(function() {
                 $('#block_donate').animate({'opacity': 'hide'}, function() {
@@ -488,16 +518,20 @@ function stat(id) {
                         VK.callMethod('resizeWindow', 627, $('#content').height());
 
                         $('#donate_ok').click(function() {
-                        var params = {
-                            type: 'votes',
-                            votes: $('#votes').val()
-                        };
-                        VK.callMethod('showOrderBox', params);
-                    });
+                            var params = {
+                                type: 'votes',
+                                votes: $('#votes').val()
+                            };
+                            VK.callMethod('showOrderBox', params);
+                            window.order = 'donate';
+                        });
                     });
                 });
             });
             VK.callMethod('resizeWindow', 627, $('#content').height());
+            VK.addCallback('onOrderSuccess', function(order_id) {
+                if (window.order == 'comments') comments_func();
+            });
             $('#content').animate({'opacity': 'show'});
         });
     };
@@ -673,12 +707,13 @@ function comments_get() {
                         <div class="stats_head">ТОП-10 комментариев по количеству «Мне нравится»</div>\
                     </div>\
                     <div style="padding: 10px;">';
-                    for (var i = 0; i < comments.length; i++) {
-                        u_id = (comments[i].from_id < 0) ? 101 : parseInt(comments[i].from_id, 10);
-                        html += '<a class="nav" href="//vk.com/wall' + window.oid  + '_' + comments[i].post_id + '?reply=' + comments[i].id + '" target="_blank">' + info[u_id].name + ' — vk.com/wall' + window.oid  + '_' + comments[i].post_id + '?reply=' + comments[i].id + '<div class="fl_r">' + number_format(comments[i].likes, 0, '.', ' ') + '</div>';
 
-                        if (i == 9) break;
+                    var count = (comments.length > 10) ? 10 : comments.length ;
+                    for (var i = 0; i < count; i++) {
+                        u_id = (comments[i].from_id < 0) ? 101 : parseInt(comments[i].from_id, 10);
+                        html += '<a class="nav" href="//vk.com/wall' + window.oid  + '_' + comments[i].post_id + '?reply=' + comments[i].id + '" target="_blank">' + info[u_id].name + ' — vk.com/wall' + window.oid  + '_' + comments[i].post_id + '?reply=' + comments[i].id + '<div class="fl_r">' + number_format(comments[i].likes, 0, '.', ' ') + '</div></a>';
                     };
+
             html += '</div>\
                     <div id="block_donate">\
                         <a class="apps_edit_add_panel block_donate">\
@@ -708,12 +743,13 @@ function comments_get() {
                             VK.callMethod('resizeWindow', 627, $('#content').height());
 
                             $('#donate_ok').click(function() {
-                            var params = {
-                                type: 'votes',
-                                votes: $('#votes').val()
-                            };
-                            VK.callMethod('showOrderBox', params);
-                        });
+                                var params = {
+                                    type: 'votes',
+                                    votes: $('#votes').val()
+                                };
+                                VK.callMethod('showOrderBox', params);
+                                window.order = 'donate';
+                            });
                         });
                     });
                 });

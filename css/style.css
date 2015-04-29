@@ -1063,3 +1063,16 @@ th.piechart_col_header_second {
   line-height: 1.4em;
   padding-bottom: 12px;
 }
+#comments_pay {
+  display: none;
+  height: 75px;
+  padding: 10px;
+}
+.pay_icon {
+  float: left;
+  padding-right: 10px;
+}
+#comments_pay_button {
+  margin-top: 10px;
+  margin-left: 0px;
+}
