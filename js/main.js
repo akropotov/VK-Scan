@@ -450,42 +450,6 @@ function stat(id) {
             });
             
             $('#block_commentator').click(function() {
-                console.log(window.get_comments);
-                var comments_func = function() {
-                    window.i = 0;
-                    window.i_end = window.posts.length;
-                    window.offset = 0;
-
-                    window.comments = [];
-
-                    window.comments_i = 0;
-                    window.comments_end = comments;
-
-                    $('#content').animate({'opacity': 'hide'}, function() {
-                        html = '<div class="wall_loader">\
-                                    <div class="wall_upload_progress_panel">\
-                                        <div class="wall_upload_progress_back_percent progress_text"></div>\
-                                        <div class="wall_upload_progress_front progress_line">\
-                                            <div class="wall_upload_progress_front_indicator">\
-                                                <span class="wall_upload_progress_front_percent progress_text"></span>\
-                                            </div>\
-                                        </div>\
-                                        <div class="wall_upload_progress progress_line"></div>\
-                                    </div>\
-                                </div>';
-
-                        $('#content').html(html);
-                                
-                        $('#content').animate({'opacity': 'show'}, function() {
-                            VK.callMethod('resizeWindow', 627, 300);
-                        });
-
-                        $('.progress_line').animate({'width': '0%'}, 'slow');
-
-                        comments_get();
-                    });
-                };
-
                 if (window.get_comments) {
                     comments_func();
                 } else {
@@ -535,6 +499,41 @@ function stat(id) {
             $('#content').animate({'opacity': 'show'});
         });
     };
+}
+
+function comments_func() {
+    window.i = 0;
+    window.i_end = window.posts.length;
+    window.offset = 0;
+
+    window.comments = [];
+
+    window.comments_i = 0;
+    window.comments_end = comments;
+
+    $('#content').animate({'opacity': 'hide'}, function() {
+        html = '<div class="wall_loader">\
+                    <div class="wall_upload_progress_panel">\
+                        <div class="wall_upload_progress_back_percent progress_text"></div>\
+                        <div class="wall_upload_progress_front progress_line">\
+                            <div class="wall_upload_progress_front_indicator">\
+                                <span class="wall_upload_progress_front_percent progress_text"></span>\
+                            </div>\
+                        </div>\
+                        <div class="wall_upload_progress progress_line"></div>\
+                    </div>\
+                </div>';
+
+        $('#content').html(html);
+                
+        $('#content').animate({'opacity': 'show'}, function() {
+            VK.callMethod('resizeWindow', 627, 300);
+        });
+
+        $('.progress_line').animate({'width': '0%'}, 'slow');
+
+        comments_get();
+    });
 }
 
 function comments_get() {
