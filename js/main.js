@@ -183,7 +183,6 @@ function array_count_values(array) {
 
 function get_id(screen_name) {
     VK.api('execute', { https: 1, code: 'var screen_name="' + screen_name + '";var api=API.utils.resolveScreenName({screen_name:screen_name});var statistics = API.storage.get({"key": "statistics"});var comments = API.storage.get({"key": "comments"});if(api.length>0){if(api.type=="user"){var user=API.users.get({user_ids:api.object_id,fields:"photo_50"});var wall=API.wall.get({filter:"owner",owner_id:api.object_id});return{id:user[0].id,photo:user[0].photo_50,posts:wall.count,statistics:statistics,comments:comments};}else if(api.type=="group"){var group=API.groups.getById({group_id:api.object_id,fields:"photo_50"});var wall=API.wall.get({filter:"owner",owner_id:"-"+api.object_id});return{id:"-"+group[0].id,photo:group[0].photo_50,posts:wall.count,statistics:statistics,comments:comments};}else return{error:"is not user or group"};}else return{error:"incorrect screen_name"};' }, function(info) { 
-        console.log(info); 
         if (info.response.posts > 10) {
             html = '<div class="wall_loader">\
                         <div class="user">\
@@ -378,9 +377,39 @@ function stat(id) {
                 data.push(days[key].count);
             }
 
+            function block_likes(posts, end) {
+                posts.sort(function(a, b) {
+                    if (a.likes < b.likes) return 1;
+                    if (a.likes > b.likes) return -1;
+                    return 0;
+                });
+                var html = '';
+                var j = 1;
+                for (var i = 0; i < posts.length; i++) {
+                    html += '<a class="nav" href="//vk.com/wall' + id + '_' + posts[i].id + '" target="_blank">' + j++ + '. vk.com/wall' + id + '_' + posts[i].id + '<div class="fl_r">' + number_format(posts[i].likes, 0, '.', ' ') + '</div></a>';
+                    if (i == end) break;
+                };
+                return html;
+            };
+
+            function block_comments(posts, end) {
+                posts.sort(function(a, b) {
+                    if (a.comments < b.comments) return 1;
+                    if (a.comments > b.comments) return -1;
+                    return 0;
+                });
+                var html = '';
+                var j = 1;
+                for (var i = 0; i < posts.length; i++) {
+                    html += '<a class="nav" href="//vk.com/wall' + id + '_' + posts[i].id + '" target="_blank">' + j++ + '. vk.com/wall' + id + '_' + posts[i].id + '<div class="fl_r">' + number_format(posts[i].comments, 0, '.', ' ') + '</div></a>';
+                    if (i == end) break;
+                };
+                return html;
+            };
+
             html += '<center><div style="width: 500px; height: 380px;"><canvas id="graph-days" width="500px" height="370px"></canvas></div></center>\
                     <script type="text/javascript">window.myBar = new Chart(document.getElementById("graph-days").getContext("2d")).Bar({ labels : [' + label.join(',') + '], datasets : [{ fillColor : "#597BA8", highlightFill: "#82A2CD", data : [' + data.join(',') + '] }]});</script>\
-                    <div class="clear_fix"><div class="stats_head">ТОП-10 записей</div></div>\
+                    <div class="clear_fix"><div id="top_10" class="stats_head">ТОП-10 записей</div></div>\
                     <table class="piechart_table" cellspacing="0" cellpadding="0" style="margin: 10px; width: 605px;">\
                         <tbody>\
                             <tr class="piechart_col_header">\
@@ -388,35 +417,25 @@ function stat(id) {
                                 <th class="piechart_col_header_second">Количество комментариев</th>\
                             </tr>\
                             <tr id="piechart_row_countries_chart_0" style="opacity: 1;">\
-                                <td class="piechart_stat_name">';
-                                posts.sort(function(a, b) {
-                                    if (a.likes < b.likes) return 1;
-                                    if (a.likes > b.likes) return -1;
-                                    return 0;
-                                });
-                                var popukar_like = posts[0];
-                                i = 0;
-                                for (var i = 0; i < posts.length; i++) {
-                                    html += '<a class="nav" href="//vk.com/wall' + id + '_' + posts[i].id + '" target="_blank">vk.com/wall' + id + '_' + posts[i].id + '<div class="fl_r">' + number_format(posts[i].likes, 0, '.', ' ') + '</div></a>';
-                                    if (i == 9) break;
-                                };
+                                <td id="top_likes" class="piechart_stat_name">';
+            html +=                 block_likes(posts, 9);
             html +=             '</td>\
-                                <td class="piechart_stat_info">';
-                                posts.sort(function(a, b) {
-                                    if (a.comments < b.comments) return 1;
-                                    if (a.comments > b.comments) return -1;
-                                    return 0;
-                                });
-                                var popular_comment = posts[0];
-                                i = 0;
-                                for (var i = 0; i < posts.length; i++) {
-                                    html += '<a class="nav" href="//vk.com/wall' + id + '_' + posts[i].id + '" target="_blank">vk.com/wall' + id + '_' + posts[i].id + '<div class="fl_r">' + number_format(posts[i].comments, 0, '.', ' ') + '</div></a>';
-                                    if (i == 9) break;
-                                };
+                                <td id="top_comments" class="piechart_stat_info">';
+            html +=                 block_comments(posts, 9);
             html +=             '</td>\
                             </tr>\
                         </tbody>\
-                    </table>';
+                    </table>\
+                    <div id="block_top">\
+                        <a class="apps_edit_add_panel">\
+                            <span class="apps_edit_add_icon">Показать ТОП-200 записей</span>\
+                        </a>\
+                    </div>\
+                    <div id="top_pay">\
+                        <img src="/VK-scan/img/pay.png" class="pay_icon">\
+                        Для того, чтобы у вас появилась возможность смотреть ТОП-200, нужно сделать единоразовый взнос в размере 3 голоса. После чего, вы сможете без ограничений пользоваться данной функцией. \
+                        <br><button id="top_pay_button" class="ok">Купить</button>\
+                    </div>';
 
                     if (comments > 0) {
                         window.comments_end = comments;
@@ -427,7 +446,7 @@ function stat(id) {
                                 </div>\
                                 <div id="comments_pay">\
                                     <img src="/VK-scan/img/pay.png" class="pay_icon">\
-                                    Для того, чтобы у вас появилась возможность анализировать комментарии страницы, нужно сделать единоразовый взнос в размере <b>9 голосов</b>. После чего, вы сможете без ограничений пользоваться данной функцией. \
+                                    Для того, чтобы у вас появилась возможность анализировать комментарии страницы, нужно сделать единоразовый взнос в размере <b>3 голоса</b>. После чего, вы сможете без ограничений пользоваться данной функцией. \
                                     <br><button id="comments_pay_button" class="ok">Купить</button>\
                                 </div>';
                     };
@@ -439,15 +458,36 @@ function stat(id) {
                     </div>';
             
             $('#content').html(html);
-            
-            if (window.user_id == id) {
-                VK.api('wall.post', { attachments: 'photo877281_360313025', message: 'Я проанализировал свою страницу.\n\nНа моей странице:\n«Мне нравится» — ' + number_format(likes, 0, '.', ' ') + '\nКомментариев — ' + number_format(comments, 0, '.', ' ') + '\nРассказать друзьям — ' + number_format(reposts, 0, '.', ' ') + '\nВложений в записях — ' + number_format(attachments, 0, '.', ' ') + '\n\nСамая популярная запись, по отметкам «Мне нравится»: vk.com/wall' + id + '_' + popukar_like.id + '\nСамая популярная запись, по количеству комментариев: vk.com/wall' + id + '_' + popular_comment.id });
-            };
 
             $('#dev_header_name').click(function() {
                 $('#content').animate({'opacity': 'hide'}, function() {
                     main();
                 });
+            });
+
+            $('#block_top').click(function() {
+                if (window.get_statistics) {
+                    $('#top_likes').html(block_likes(posts, 200));
+                    $('#top_comments').html(block_comments(posts, 200));
+                    $('#top_10').html('ТОП-200 записей');
+                    $('#block_top').hide();
+                    VK.callMethod('resizeWindow', 627, $('#content').height());
+                } else {
+                    $('#block_top').animate({'opacity': 'hide'}, function() {
+                        $('#top_pay').animate({'opacity': 'show'}, function() {
+                            VK.callMethod('resizeWindow', 627, $('#content').height());
+
+                            $('#top_pay_button').click(function() {
+                                var params = { 
+                                    type: 'item', 
+                                    item: 'statistics' 
+                                }; 
+                                VK.callMethod('showOrderBox', params);
+                                window.order = 'statistics';
+                            });
+                        });
+                    });
+                };
             });
             
             $('#block_commentator').click(function() {
@@ -470,6 +510,7 @@ function stat(id) {
                     });
                 };
             });
+
             $('.block_donate').click(function() {
                 $('#block_donate').animate({'opacity': 'hide'}, function() {
                     $('#block_donate').html('<div class="clear_fix">\
@@ -496,6 +537,13 @@ function stat(id) {
             VK.callMethod('resizeWindow', 627, $('#content').height());
             VK.addCallback('onOrderSuccess', function(order_id) {
                 if (window.order == 'comments') comments_func();
+                if (window.order == 'statistics') {
+                    $('#top_likes').html(block_likes(posts, 200));
+                    $('#top_comments').html(block_comments(posts, 200));
+                    $('#top_10').html('ТОП-200 записей');
+                    $('#top_pay').hide();
+                    VK.callMethod('resizeWindow', 627, $('#content').height());
+                };
             });
             $('#content').animate({'opacity': 'show'});
         });
