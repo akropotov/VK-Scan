@@ -1078,4 +1078,10 @@ th.piechart_col_header_second {
 }
 #top_pay {
   display: none;
+  height: 75px;
+  padding: 10px;
+}
+#comments_pay_button {
+  margin-top: 10px;
+  margin-left: 0px;
 }
