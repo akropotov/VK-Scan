@@ -467,8 +467,8 @@ function stat(id) {
 
             $('#block_top').click(function() {
                 if (window.get_statistics) {
-                    $('#top_likes').html(block_likes(posts, 200));
-                    $('#top_comments').html(block_comments(posts, 200));
+                    $('#top_likes').html(block_likes(posts, 199));
+                    $('#top_comments').html(block_comments(posts, 199));
                     $('#top_10').html('ТОП-200 записей');
                     $('#block_top').hide();
                     VK.callMethod('resizeWindow', 627, $('#content').height());
@@ -538,8 +538,8 @@ function stat(id) {
             VK.addCallback('onOrderSuccess', function(order_id) {
                 if (window.order == 'comments') comments_func();
                 if (window.order == 'statistics') {
-                    $('#top_likes').html(block_likes(posts, 200));
-                    $('#top_comments').html(block_comments(posts, 200));
+                    $('#top_likes').html(block_likes(posts, 199));
+                    $('#top_comments').html(block_comments(posts, 199));
                     $('#top_10').html('ТОП-200 записей');
                     $('#top_pay').hide();
                     VK.callMethod('resizeWindow', 627, $('#content').height());
