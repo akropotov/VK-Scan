@@ -12,7 +12,7 @@
 
 ### Использованые библиотеки
 * [Chart.js](https://github.com/nnnick/Chart.js)
-* [jQuery JavaScript Library](https://github.com/jquery/jquery)
+* [AngularJS](https://github.com/angular/angular.js)
 
 ### Лицензия
-[The MIT License (MIT)](https://github.com/gromadchuk/VK-scan/blob/gh-pages/LICENSE).
+[The MIT License (MIT)](https://github.com/gromadchuk/VK-scan/blob/gh-pages/LICENSE)

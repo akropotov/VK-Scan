@@ -1,19 +1,234 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="VKScanApp">
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
     <script type="text/javascript" src="//vk.com/js/api/xd_connection.js?2"></script>
-    <script type="text/javascript" src="js/jquery-2.1.3.min.js"></script>
+    <script type="text/javascript" src="js/angular.min.js"></script>
     <script type="text/javascript" src="js/chart.min.js"></script>
-    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/controller.js"></script>
 </head>
-<body>
-    <div id="content" style="display: none;">
-        <div id="loader">
-            <div id="images"><img src="img/loadline.gif"></div>
-            <div id="text">Загрузка..</div>
+<body ng-controller="VKScanCtrl">
+    <div id="loader" ng-show="block == 'loader'">
+        <div id="images"><img src="img/loadline.gif"></div>
+        <div id="text">Загрузка..</div>
+    </div>
+
+    <div id="im_rows0" class="im_rows" ng-show="block == 'main'">
+        <div id="objects">
+            <div class="dev_header">
+                <div style="margin-top: 4px;" class="fl_r">
+                    <button>Обратная связь</button>
+                </div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <table id="settings_addr_table" cellspacing="0" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td class="settings_edit_addr_label noselect">http://vk.com/</td>
+                                            <td class="settings_addr_field">
+                                            	<input id="settings_addr" maxlength="32" type="text" class="text settings_addr" placeholder="durov" ng-model="custom_screen_name">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                            <td><button id="scan" ng-click="custom_scan()">Сканировать</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="object" ng-click="object(user.screen_name)">
+                <div class="im_photo">
+                    <img ng-src="{{user.photo}}" class="fl_l" width="43" height="43">
+                </div>
+                <div class="fl_l name">
+                    <nobr>{{user.name}}</nobr>
+                </div>
+                <div class="online">Ваш профиль</div>
+            </div>
+            <div class="object" ng-repeat="group in groups.items" ng-click="object(group.screen_name)">
+                <div class="im_photo"><img ng-src="{{group.photo_50}}" class="fl_l" width="43" height="43"></div>
+                <div class="fl_l name">
+                    <nobr>{{group.name}}</nobr>
+                </div>
+                <div class="online">{{group.members_count | number}} {{declension(group.members_count, ['участник', 'участника', 'участников'])}}</div>
+            </div>
         </div>
+    </div>
+
+    <div class="progress" ng-show="block == 'progress'">
+        <div class="user">
+            <img ng-src="{{info.photo}}" class="loader_user">
+        </div>
+        <div class="wall_upload_progress_panel">
+            <div class="wall_upload_progress_back_percent progress_text">{{load.offset}}/{{load.count}}</div>
+            <div class="wall_upload_progress_front progress_line" style="width: {{load.progress}}%;">
+                <div class="wall_upload_progress_front_indicator">
+                    <span class="wall_upload_progress_front_percent progress_text">{{load.offset}}/{{load.count}}</span>
+                </div>
+            </div>
+            <div class="wall_upload_progress progress_line" style="width: {{load.progress}}%;"></div>
+        </div>
+    </div>
+
+    <div ng-show="block == 'stat_result'">
+        <div class="dev_header">
+            <div id="dev_header_name" class="dev_header_name">
+                <a ng-click="main()">Главная</a><span class="dev_raquo_parents"> » </span>статистика по записям
+            </div>
+        </div>
+        <div style="padding: 10px;">
+            <div class="c c_l">«Мне нравится» — {{counts.likes | number}}</div>
+            <div class="c c_c">Комментариев — {{counts.comments | number}}</div>
+            <div class="c c_r">Рассказать друзьям — {{counts.reposts | number}}</div>
+            <div class="c c_a">Вложений в записях — {{counts.attachments | number}}</div>
+        </div>
+        <div class="clear_fix">
+            <div class="stats_head">Вложения в записях</div>
+        </div>
+        <table>
+            <tbody>
+                <tr>
+                    <td valign="top">
+                        <table class="piechart_table" cellspacing="0" cellpadding="0">
+                            <tbody>
+                                <tr class="piechart_col_header">
+                                    <th class="piechart_col_header_first">тип вложения</th>
+                                    <th class="piechart_col_header_second">количество</th>
+                                </tr>
+                                <tr id="piechart_row_countries_chart_0" style="opacity: 1;" ng-repeat="item in attachments_chart">
+                                    <td class="piechart_stat_name">
+                                        <div class="piechart_stat_color" style="background-color: {{item.color}}"></div>
+                                        {{item.label}}
+                                    </td>
+                                    <td class="piechart_stat_info">{{item.value}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td>
+                        <div id="canvas_wall_div"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="clear_fix" ng-show="dates_count > 1">
+            <div class="stats_head">Записи по годам</div>
+        </div>
+        <center>
+            <div id="canvas_years_div"></div>
+        </center>
+        <div class="clear_fix">
+            <div class="stats_head">Записи по дням</div>
+        </div>
+        <center>
+            <div id="canvas_days_div"></div>
+        </center>
+                   
+        <div class="clear_fix">
+            <div id="top_10" class="stats_head">ТОП-{{limit_posts}} записей</div>
+        </div>
+        <table class="piechart_table" cellspacing="0" cellpadding="0" style="margin: 10px; width: 605px;">
+            <tbody>
+                <tr class="piechart_col_header">
+                    <th class="piechart_col_header_first">Количество «Мне нравится»</th>
+                    <th class="piechart_col_header_second">Количество комментариев</th>
+                </tr>
+                <tr id="piechart_row_countries_chart_0" style="opacity: 1;">
+                    <td id="top_likes" class="piechart_stat_name">
+                        <a class="nav" href="//vk.com/wall{{info.id}}_{{post.id}}" target="_blank" ng-repeat="post in posts | orderBy:'-likes' | limitTo: limit_posts">
+                            {{$index + 1}}. vk.com/wall{{info.id}}_{{post.id}}
+                            <div class="fl_r">{{post.likes | number}}</div>
+                        </a>
+                    </td>
+                    <td id="top_comments" class="piechart_stat_info">
+                        <a class="nav" href="//vk.com/wall{{info.id}}_{{post.id}}" target="_blank" ng-repeat="post in posts | orderBy:'-comments' | limitTo: limit_posts">
+                            {{$index + 1}}. vk.com/wall{{info.id}}_{{post.id}}
+                            <div class="fl_r">{{post.comments | number}}</div>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a class="apps_edit_add_panel" ng-show="stat_step == 1" ng-click="get_top()">
+            <span class="apps_edit_add_icon">Показать ТОП-200 записей</span>
+        </a>
+        <div class="buy_block" ng-show="stat_step == 2">
+            <img src="img/pay.png" class="buy_icon">
+            Для того, чтобы у вас появилась возможность смотреть ТОП-200, нужно сделать единоразовый взнос в размере <b>7 голосов</b>. После чего, вы сможете без ограничений пользоваться данной функцией.<br>
+            <button class="pay" ng-click="buy_stat()">Купить</button>
+        </div>
+
+        <div ng-show="counts.comments > 0">
+            <a class="apps_edit_add_panel" ng-show="comments_step == 1" ng-click="get_commentators()">
+                <span class="apps_edit_add_icon">Определить лучшего комментатора</span>
+            </a>
+            <div class="buy_block" ng-show="comments_step == 2">
+                <img src="img/pay.png" class="buy_icon">
+                Для того, чтобы у вас появилась возможность анализировать комментарии страницы, нужно сделать единоразовый взнос в размере <b>7 голосов</b>. После чего, вы сможете без ограничений пользоваться данной функцией.<br>
+                <button class="pay" ng-click="buy_comments()">Купить</button>
+            </div>
+        </div>
+    </div>
+
+    <div ng-show="block == 'commentators'">
+        <div class="dev_header">
+            <div id="dev_header_name" class="dev_header_name">
+                <a ng-click="main()">Главная</a>
+                <span class="dev_raquo_parents"> » </span><a ng-click="stat_back()">статистика по записям</a>
+                <span class="dev_raquo_parents"> » </span>статистика по комментариям
+            </div>
+        </div>
+        <div ng-show="year_count > 1">
+            <div class="clear_fix">
+                <div class="stats_head">Комментарии по годам</div>
+            </div>
+            <center>
+                <div id="canvas_years_comments_div"></div>
+            </center>
+        </div>
+        <div class="clear_fix">
+            <div class="stats_head">ТОП-10 комментаторов</div>
+        </div>
+        <table class="piechart_table" cellspacing="0" cellpadding="0" style="margin: 10px; width: 605px;">
+            <tbody>
+                <tr class="piechart_col_header">
+                    <th class="piechart_col_header_first">Количество комментариев</th>
+                    <th class="piechart_col_header_second">Количество «Мне нравится»</th>
+                </tr>
+                <tr id="piechart_row_countries_chart_0" style="opacity: 1;">
+                    <td class="piechart_stat_name">
+                        <a class="nav" href="//vk.com/{{info_users[item.id].screen_name}}" target="_blank" ng-repeat="item in top_comments">
+                            {{info_users[item.id].name}}
+                            <div class="fl_r">{{item.count | number}}</div>
+                        </a>
+                    </td>
+                    <td class="piechart_stat_info">
+                        <a class="nav" href="//vk.com/{{info_users[item.id].screen_name}}" target="_blank"  ng-repeat="item in top_likes">
+                            {{info_users[item.id].name}}
+                            <div class="fl_r">{{item.likes | number}}</div>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="clear_fix">
+            <div class="stats_head">ТОП-10 комментариев по количеству «Мне нравится»</div>
+        </div>
+        <div style="padding: 10px;">
+            <a class="nav" href="//vk.com/wall{{info.id}}_{{item.post_id}}?reply={{item.id}}" target="_blank" ng-repeat="item in comments | orderBy:'-likes' | limitTo: 10">
+                {{item.from_id < 0 ? info_users[101].name : info_users[item.from_id].name}} — vk.com/wall{{info.id}}_{{item.post_id}}?reply={{item.id}}
+                <div class="fl_r">{{item.likes}}</div>
+            </a>
+        </div>
+    </div>
+
+    <div class="error" ng-show="block == 'error'">
+        {{error}} <a ng-click="main()">На главную »</a>
     </div>
 </body>
 </html>

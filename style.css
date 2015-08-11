@@ -169,6 +169,11 @@ a:hover {
   margin: 100px auto;
   text-align: center;
 }
+.error {
+  padding: 50px;
+  text-align: center;
+
+}
 .flat_button.apps_edit_run_button {
   margin-top: 10px;
 }
@@ -259,7 +264,7 @@ a:hover {
   padding: 4px 0px 10px;
 }
 .pva_title_text {
-  background: url(/VK-scan/img/post_widget.png) no-repeat 1px -14px;
+  background: url(img/post_widget.png) no-repeat 1px -14px;
   padding-left: 19px;
   white-space: nowrap;
   overflow: hidden;
@@ -270,16 +275,16 @@ a:hover {
   margin: 0 5px 0 7px;
 }
 .c_l {
-  background: url(/VK-scan/img/feedback_color.png) no-repeat -20px -46px;
+  background: url(img/feedback_color.png) no-repeat -20px -46px;
 }
 .c_c {
-  background: url(/VK-scan/img/feedback_color.png) no-repeat -20px -94px;
+  background: url(img/feedback_color.png) no-repeat -20px -94px;
 }
 .c_r {
-  background: url(/VK-scan/img/feedback_color.png) no-repeat -20px 3px;
+  background: url(img/feedback_color.png) no-repeat -20px 3px;
 }
 .c_a {
-  background: url(/VK-scan/img/feedback_color.png) no-repeat -20px -69px;
+  background: url(img/feedback_color.png) no-repeat -20px -69px;
 }
 .c {
   padding-left: 29px;
@@ -388,8 +393,8 @@ input.donate {
   font-size: 11px;
   outline: 0;
 }
-button.ok {
-  margin: 0 0 10px 5px;
+button.pay {
+  margin: 10px 0 10px 0px;
   padding: 6px 16px 7px 16px;
   font-size: 11px;
   display: inline-block;
@@ -476,14 +481,9 @@ div.li {
 ul li {
   margin-left: -25px;
 }
-
-.wall_loader {
-  margin: 100px 90px;
-  text-align: center;
-}
 .wall_upload_progress_panel {
   background-color: #e9ecf0;
-  margin: 0 0 0 1px;
+  margin: 15px 0 0 1px;
   position: relative;
   width: 435px;
 }
@@ -514,7 +514,7 @@ ul li {
   border: 1px solid #45688E;
   margin: -1px;
   height: 20px;
-  background: #597da3 url(/VK-scan/img/progress_grad_flat.gif) repeat;
+  background: #597da3 url(img/progress_grad_flat.gif) repeat;
 }
 .loader_user {
   border-radius: 25px;
@@ -645,6 +645,10 @@ a.graph_menu_item:hover {
 }
 #stats_tabs .progress {
   margin: 10px;
+}
+.progress {
+  padding: 100px;
+  text-align: center;
 }
 #all_stats_tabs {
   background-color: #F7F7F7;
@@ -1063,25 +1067,11 @@ th.piechart_col_header_second {
   line-height: 1.4em;
   padding-bottom: 12px;
 }
-#comments_pay {
-  display: none;
+.buy_block {
   height: 75px;
   padding: 10px;
 }
-.pay_icon {
+.buy_icon {
   float: left;
   padding-right: 10px;
-}
-#comments_pay_button {
-  margin-top: 10px;
-  margin-left: 0px;
-}
-#top_pay {
-  display: none;
-  height: 75px;
-  padding: 10px;
-}
-#top_pay_button {
-  margin-top: 10px;
-  margin-left: 0px;
 }
