@@ -1,6 +1,6 @@
 var VKFriendsListsApp = angular.module('VKScanApp', []);
 
-VKFriendsListsApp.controller('VKScanCtrl', function($scope, $document, $timeout) {
+VKFriendsListsApp.controller('VKScanCtrl', function($scope, $document, $window, $timeout) {
     $scope.block = 'loader';
 
     $scope.declension = function(number, titles) {
@@ -458,6 +458,10 @@ VKFriendsListsApp.controller('VKScanCtrl', function($scope, $document, $timeout)
         $scope.block = name;
         $scope.$apply();
         $scope.resize();
+    };
+
+    $scope.write = function() {
+        $window.open('//vk.com/write877281');
     };
 
     VK.addCallback('onOrderSuccess', function() {
