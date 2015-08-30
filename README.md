@@ -1,5 +1,5 @@
-## VK scan
-Приложение «[VK scan] (https://vk.com/app2999999)» сканирует стену пользователя или же сообщества.
+## VK Scan
+Приложение «[VK Scan] (https://vk.com/app2999999)» сканирует стену пользователя или же сообщества.
 
 ##### Список доступной информации
 * суммарное количество лайков, репостов, комментариев и вложений
@@ -15,4 +15,4 @@
 * [AngularJS](https://github.com/angular/angular.js)
 
 ### Лицензия
-[The MIT License (MIT)](https://github.com/gromadchuk/VK-scan/blob/gh-pages/LICENSE)
+[The MIT License (MIT)](https://github.com/gromadchuk/VK-Scan/blob/gh-pages/LICENSE)
