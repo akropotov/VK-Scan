@@ -238,62 +238,36 @@ VKFriendsListsApp.controller('VKScanCtrl', function($scope, $document, $window, 
             }]
         });
 
-        $scope.stat_step     = 1;
-        $scope.comments_step = 1;
+        $scope.stat_step = 1;
 
         $scope.get_top = function() {
-            if ($scope.extra.statistics == 'true') {
-                $scope.limit_posts = 200;
-                $scope.stat_step   = 3;
-            } else {
-                $scope.stat_step = 2;
-            };
+            $scope.limit_posts = 200;
+            $scope.stat_step   = 2;
 
             $scope.update('stat_result');
         };
 
-        $scope.buy_stat = function() {
-            VK.callMethod('showOrderBox', {
-                type: 'item',
-                item: 'statistics'
-            });
-            $scope.order = 'statistics';
-        };
-
         $scope.get_commentators = function() {
-            if ($scope.extra.comments == 'true') {
-                $scope.load = {
-                    offset:          0,
-                    progress:        0,
-                    comments_offset: 0,
-                    posts_offset:    0,
-                    posts_count:     $scope.posts.length,
-                    count:           $scope.counts.comments
-                };
-                $scope.comments = [];
-                var post;
-
-                $scope.posts.sort(function(a, b) {
-                    if (a.comments < b.comments) return 1;
-                    if (a.comments > b.comments) return -1;
-                    return 0;
-                });
-
-                $scope.update('progress');
-                $scope.stat_comments();
-                VK.callMethod('scrollWindow', 0, 500);
-            } else {
-                $scope.comments_step = 2;
-                $scope.update('stat_result');
+            $scope.load = {
+                offset:          0,
+                progress:        0,
+                comments_offset: 0,
+                posts_offset:    0,
+                posts_count:     $scope.posts.length,
+                count:           $scope.counts.comments
             };
-        };
+            $scope.comments = [];
+            var post;
 
-        $scope.buy_comments = function() {
-            VK.callMethod('showOrderBox', {
-                type: 'item',
-                item: 'comments'
+            $scope.posts.sort(function(a, b) {
+                if (a.comments < b.comments) return 1;
+                if (a.comments > b.comments) return -1;
+                return 0;
             });
-            $scope.order = 'comments';
+
+            $scope.update('progress');
+            $scope.stat_comments();
+            VK.callMethod('scrollWindow', 0, 500);
         };
 
         $scope.update('stat_result');
@@ -465,17 +439,6 @@ VKFriendsListsApp.controller('VKScanCtrl', function($scope, $document, $window, 
     $scope.write = function() {
         $window.open('//vk.com/write877281');
     };
-
-    VK.addCallback('onOrderSuccess', function() {
-        if ($scope.order == 'comments')  {
-            $scope.extra.comments = 'true';
-            $scope.get_commentators();
-        }
-        if ($scope.order == 'statistics') {
-            $scope.extra.statistics = 'true';
-            $scope.get_top();
-        }
-    });
 
     VK.init(function() { 
         $scope.main();

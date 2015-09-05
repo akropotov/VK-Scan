@@ -157,21 +157,11 @@
         <a class="apps_edit_add_panel" ng-show="stat_step == 1" ng-click="get_top()">
             <span class="apps_edit_add_icon">Показать ТОП-200 записей</span>
         </a>
-        <div class="buy_block" ng-show="stat_step == 2">
-            <img src="img/pay.png" class="buy_icon">
-            Для того, чтобы у вас появилась возможность смотреть ТОП-200, нужно сделать единоразовый взнос в размере <b>7 голосов</b>. После чего, вы сможете без ограничений пользоваться данной функцией.<br>
-            <button class="pay" ng-click="buy_stat()">Купить</button>
-        </div>
 
         <div ng-show="counts.comments > 0">
-            <a class="apps_edit_add_panel" ng-show="comments_step == 1" ng-click="get_commentators()">
+            <a class="apps_edit_add_panel" ng-click="get_commentators()">
                 <span class="apps_edit_add_icon">Определить лучшего комментатора</span>
             </a>
-            <div class="buy_block" ng-show="comments_step == 2">
-                <img src="img/pay.png" class="buy_icon">
-                Для того, чтобы у вас появилась возможность анализировать комментарии страницы, нужно сделать единоразовый взнос в размере <b>7 голосов</b>. После чего, вы сможете без ограничений пользоваться данной функцией.<br>
-                <button class="pay" ng-click="buy_comments()">Купить</button>
-            </div>
         </div>
     </div>
 
